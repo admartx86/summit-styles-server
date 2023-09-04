@@ -5,22 +5,22 @@ const User = require('../models/user');
 
 const verifyCallback = (username, password, done) => {
     User.findOne({ username: username })
-        .then(
-            (user) => {
-                if (!user) { return done(null, false) }
-                const isValid = validatePassword(password, user.hash, user.salt);
-                if (isValid) {
-                    return done(null, user);
-                } else {
-                return done(null, false);
-                }
+    .then(
+        (user) => {
+            if (!user) { return done(null, false) }
+            const isValid = validatePassword(password, user.hash, user.salt);
+            if (isValid) {
+                return done(null, user);
+            } else {
+            return done(null, false);
             }
-        )
-        .catch(
-            (err) => {
-                done(err);
-            }
-        )
+        }
+    )
+    .catch(
+        (err) => {
+            done(err);
+        }
+    )
 };
 
 const strategy = new LocalStrategy(verifyCallback);
@@ -32,8 +32,8 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser((userId, done) => {
     User.findById(userId)
-        .then((user) => {
-            done(null, user);
-        })
-        .catch(err => done(err))
+    .then((user) => {
+        done(null, user);
+    })
+    .catch(err => done(err))
 });
