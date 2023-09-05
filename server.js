@@ -1,12 +1,16 @@
-if (process.env.NODE_ENV != 'production') {
-    require('dotenv').config();
-}
+require('dotenv').config();
+
+const privateKeyPath = process.env.PRIVATE_KEY_PATH;
+const certificatePath = process.env.CERTIFICATE_PATH;
+const caPath = process.env.CA_PATH;
+const privateKey = fs.readFileSync(privateKeyPath, 'utf8');
+const certificate = fs.readFileSync(certificatePath, 'utf8');
+const ca = fs.readFileSync(caPath, 'utf8');
+
+const credentials = { key: privateKey, cert: certificate, ca: ca };
+
 const fs = require('fs');
 const https = require('https');
-const privateKey = fs.readFileSync('/etc/letsencrypt/live/adammartinez.app/privkey.pem', 'utf8');
-const certificate = fs.readFileSync('/etc/letsencrypt/live/adammartinez.app/cert.pem', 'utf8');
-const ca = fs.readFileSync('/etc/letsencrypt/live/adammartinez.app/chain.pem', 'utf8');
-const credentials = { key: privateKey, cert: certificate, ca: ca };
 
 const express = require('express');
 const app = express();
