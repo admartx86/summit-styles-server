@@ -1,5 +1,8 @@
 require('dotenv').config();
 
+const fs = require('fs');
+const https = require('https');
+
 const privateKeyPath = process.env.PRIVATE_KEY_PATH;
 const certificatePath = process.env.CERTIFICATE_PATH;
 const caPath = process.env.CA_PATH;
@@ -8,9 +11,6 @@ const certificate = fs.readFileSync(certificatePath, 'utf8');
 const ca = fs.readFileSync(caPath, 'utf8');
 
 const credentials = { key: privateKey, cert: certificate, ca: ca };
-
-const fs = require('fs');
-const https = require('https');
 
 const express = require('express');
 const app = express();
@@ -73,5 +73,5 @@ app.use(routes);
 
 const httpsServer = https.createServer(credentials, app);
 httpsServer.listen(process.env.PORT, () => {
-    console.log('HTTPS Backend Server running on port'+ process.env.PORT+'.');
+    console.log('HTTPS Backend Server running.');
 });
