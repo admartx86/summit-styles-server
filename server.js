@@ -19,14 +19,32 @@ const connectToDb = require('./config/connectToDb');
 const mongooseConnection = connectToDb();
 
 const cors = require('cors');
+
+// const corsOptions = {
+//     origin: 'https://summitstyles.dev',
+//     credentials: true
+// };
+
 const corsOptions = {
-    origin: 'https://summitstyles.dev',
+    origin: function (origin, callback) {
+        const whitelist = [/^https:\/\/summitstyles\.dev$/, /^http:\/\/localhost:(\d+)$/, /^http:\/\/172.233.221.154:8080$/];
+        if (origin) {
+            if (whitelist.some(allowedOrigin => allowedOrigin.test(origin) || allowedOrigin === origin)) {
+                callback(null, true)
+            } else {
+                callback(new Error('Not allowed by CORS'))
+            }
+        } else {
+            // Handle the case where origin is null or undefined
+            callback(new Error('Origin not provided'), false);
+        }
+    },
     credentials: true
 };
 
 // const corsOptions = {
 //     origin: function (origin, callback) {
-//         const whitelist = ['https://summitstyles.dev'];
+//         const whitelist = ['https://summitstyles.dev', 'localhost:8080'];
 //         if (whitelist.some(allowedOrigin => allowedOrigin.test(origin) || allowedOrigin === origin)) {
 //             callback(null, true)
 //         } else {
@@ -35,6 +53,7 @@ const corsOptions = {
 //     },
 //     credentials: true
 // };
+
 // const corsOptions = {
 //     origin: '/^http:\/\/localhost(:\d+)?$/', 'https://summitstyles.dev'
 // };
