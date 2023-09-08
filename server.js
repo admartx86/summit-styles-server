@@ -90,7 +90,14 @@ app.use(passport.session());
 const routes = require('./routes');
 app.use(routes);
 
-const httpsServer = https.createServer(credentials, app);
-httpsServer.listen(process.env.PORT, () => {
-    console.log('HTTPS Backend Server running.');
-});
+if (process.env.NODE_ENV === 'development') {
+    const http = require('http');
+    http.createServer(app).listen(process.env.PORT);
+    console.log('HTTP Backend Server running.')
+}
+else {
+    const httpsServer = https.createServer(credentials, app);
+    httpsServer.listen(process.env.PORT, () => {
+        console.log('HTTPS Backend Server running.');
+    });
+};
