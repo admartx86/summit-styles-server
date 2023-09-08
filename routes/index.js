@@ -30,9 +30,14 @@ router.post('/register', (req, res, next) => {
     );
 
     newUser.save()
-        .then((user) => {
-            console.log(user);
-        });
+    .then((user) => {
+        console.log(user);
+        res.json({ message: 'Registration successful', user });  // Sending response back
+    })
+    .catch((error) => {
+        console.log(error);
+        res.status(500).json({ message: 'An error occurred' });
+    });
 
 });
 
