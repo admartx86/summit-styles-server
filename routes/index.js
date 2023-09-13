@@ -51,4 +51,27 @@ router.get('/products', (req, res) => {
         });
 });
 
+router.get('/products/:productId', async (req, res) => {
+    const { productId } = req.params;
+
+    try {
+        const product = await Product.findOne({ id: productId });
+        // const product = await Product.findOne();
+
+        if (!product) {
+            console.error(`Product with ID ${productId} not found in database`);
+            return res.status(404).json({ message: 'Product not found' });
+        }
+
+        console.log(`Product with ID ${productId} found in database`);
+        console.log(`Sending product data: ${JSON.stringify(product)}`);
+        res.status(200).json(product);
+
+    } catch (error) {
+        console.error("An error occurred while fetching product:", error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+
 module.exports = router;
