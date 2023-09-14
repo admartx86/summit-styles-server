@@ -73,5 +73,28 @@ router.get('/products/:productId', async (req, res) => {
     }
 });
 
+router.post("/add-to-cart", (req, res) => {
+    if (!req.session.cart) {
+      req.session.cart = [];
+    }
+    req.session.cart.push(req.body.item);
+    req.session.save((err) => {
+      if (err) {
+        return res.status(500).send("Failed to save to session");
+      }
+      console.log("Session:", req.session);
+      console.log("Session ID:", req.sessionID);
+      console.log("Session Cart:", req.session.cart);
+      return res.status(200).send("Item added to cart");
+    });
+  });
+
+router.get("/get-cart", (req, res) => {
+    const cart = req.session.cart || [];
+    console.log("Request Headers:", req.headers);
+    console.log("Backend Cart:", req.session.cart);
+    res.status(200).json({ cart });
+});
+  
 
 module.exports = router;
