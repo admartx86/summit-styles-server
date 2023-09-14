@@ -15,6 +15,8 @@ const credentials = { key: privateKey, cert: certificate, ca: ca };
 const express = require('express');
 const app = express();
 
+app.set('trust proxy', 1);
+
 const connectToDb = require('./config/connectToDb');
 const mongooseConnection = connectToDb();
 
