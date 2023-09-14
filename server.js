@@ -54,6 +54,7 @@ app.use(session({
     secret: process.env.SECRET,
     resave: false,
     saveUninitialized: true,
+    secure: process.env.NODE_ENV === 'production',
     store: sessionStore,
     cookie: {
         maxAge: 1000 * 60 * 60 * 24
@@ -68,6 +69,11 @@ app.use(passport.session());
 const routes = require('./routes');
 app.use(routes);
 
+app.use((req, res, next) => {
+    console.log("Session: ", req.session);
+    next();
+  });
+  
 if (process.env.NODE_ENV === 'development') {
     const http = require('http');
     http.createServer(app).listen(process.env.PORT);
