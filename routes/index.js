@@ -95,6 +95,5 @@ router.get("/get-cart", (req, res) => {
     console.log("Backend Cart:", req.session.cart);
     res.status(200).json({ cart });
 });
-  
 
 module.exports = router;
