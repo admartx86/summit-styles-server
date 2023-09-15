@@ -15,7 +15,7 @@ const credentials = { key: privateKey, cert: certificate, ca: ca };
 const express = require('express');
 const app = express();
 
-app.set('trust proxy', 1);
+// app.set('trust proxy', '139.162.71.199')
 
 const connectToDb = require('./config/connectToDb');
 const mongooseConnection = connectToDb();
@@ -56,10 +56,13 @@ app.use(session({
     secret: process.env.SECRET,
     resave: false,
     saveUninitialized: true,
-    secure: process.env.NODE_ENV === 'production',
+    
     store: sessionStore,
+    proxy: true,
     cookie: {
-        maxAge: 1000 * 60 * 60 * 24
+        maxAge: 1000 * 60 * 60 * 24,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'None'
     }
 }));
 
