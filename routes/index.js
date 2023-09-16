@@ -241,5 +241,33 @@ router.delete("/remove-from-favorites/:productId", async (req, res) => {
 
 });
 
+router.delete("/remove-from-cart/:productId/:size", async (req, res) => {
+  
+    const { productId, size } = req.params;
+    console.log("Received productId:", productId); // Debugging
+    if (req.isAuthenticated()) {
+      try {
+        const user = await User.findById(req.user._id);
+        const itemIndex = user.cart.findIndex(cartItem => cartItem.id === Number(productId) && cartItem.size === size);
+        if (itemIndex > -1) {
+          user.cart.splice(itemIndex, 1);
+          console.log("req.user.cart", req.user.cart);
+          await user.save();
+        }
+      }
+      catch (err) {
+        return res.status(500).send("Failed to remove from cart");
+      }
+    }
+    else {
+      const itemIndex = req.session.cart.findIndex(cartItem => cartItem.id === Number(productId) && cartItem.size === size);
+      if (itemIndex > -1) {
+        req.session.cart.splice(itemIndex, 1);
+        console.log("req.session.cart", req.session.cart);
+      }
+    }
+    return res.status(200).send("Item removed from cart");
+  
+  });
 
 module.exports = router;
