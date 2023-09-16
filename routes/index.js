@@ -25,6 +25,19 @@ router.post('/login', (req, res, next) => {
       await loggedInUser.save();
       req.session.cart = [];
     }
+    if (req.session.favorites && req.session.favorites.length > 0) {
+      const loggedInUser = await User.findById(user._id);
+      req.session.favorites.forEach(sessionItem => {
+        const itemIndex = loggedInUser.favorites.findIndex(favoritesItem => favoritesItem.id === sessionItem.id);
+        if (itemIndex > -1) {
+          loggedInUser.favorites[itemIndex].quantity += sessionItem.quantity;
+        } else {
+        loggedInUser.favorites.push(sessionItem);
+        }
+      });
+      await loggedInUser.save();
+      req.session.favorites = [];
+    }
     req.login(user, async (loginErr) => {
       if (loginErr) {
         return next(loginErr);
@@ -130,5 +143,103 @@ router.get("/get-cart", async (req, res) => {
     return res.status(200).json({ cart: sessionCart });
   }
 });
+
+router.post("/add-to-favorites", async (req, res) => {
+if (!req.session.favorites) {
+    req.session.favorites = [];
+  }
+  const idAsNumber = Number(req.body.item.productId);
+  const newItem = {
+    id: idAsNumber,
+    quantity: req.body.item.quantity,
+    name: req.body.item.productName,
+    image: req.body.item.productImage,
+    size: req.body.item.selectedSize,
+    color: req.body.item.selectedColor,
+    description: null,
+    category: null,
+    price: req.body.item.productPrice
+  };
+  req.session.favorites.push(newItem);
+  req.session.save((err) => {
+    if (err) {
+      return res.status(500).send("Failed to save to session");
+    }
+  });
+  if (req.isAuthenticated()) {
+    try {
+      const user = await User.findById(req.user._id);
+      user.favorites.push(newItem);
+      await user.save();
+    }
+    catch (err) {
+      return res.status(500).send("Failed to add to user's favorites");
+    }
+  }
+  console.log(req.session.favorites);
+  return res.status(200).send("Item added to favorites");
+});
+
+router.get("/get-cart", async (req, res) => { 
+  if (req.isAuthenticated()) {
+    try {
+      const user = await User.findById(req.user._id).populate('cart._id');
+      return res.status(200).json({ cart: user.cart });
+    }
+    catch (err) {
+      return res.status(500).send("Failed to get cart");
+    }
+  }
+  else {
+    const sessionCart = req.session.cart || [];
+    return res.status(200).json({ cart: sessionCart });
+  }
+});
+
+router.get("/get-favorites", async (req, res) => { 
+  if (req.isAuthenticated()) {
+    try {
+      const user = await User.findById(req.user._id).populate('favorites._id');
+      return res.status(200).json({ favorites: user.favorites });
+    }
+    catch (err) {
+      return res.status(500).send("Failed to get favorites");
+    }
+  }
+  else {
+    const sessionFavorites = req.session.favorites || [];
+    return res.status(200).json({ favorites: sessionFavorites });
+  }
+});
+
+router.delete("/remove-from-favorites/:productId", async (req, res) => {
+
+  const { productId } = req.params;
+  console.log("Received productId:", productId); // Debugging
+  if (req.isAuthenticated()) {
+    try {
+      const user = await User.findById(req.user._id);
+      const itemIndex = user.favorites.findIndex(favoritesItem => favoritesItem.id === Number(productId));
+      if (itemIndex > -1) {
+        user.favorites.splice(itemIndex, 1);
+        console.log("req.user.favorite", req.user.favorites);
+        await user.save();
+      }
+    }
+    catch (err) {
+      return res.status(500).send("Failed to remove from favorites");
+    }
+  }
+  else {
+    const itemIndex = req.session.favorites.findIndex(favoritesItem => favoritesItem.id === Number(productId));
+    if (itemIndex > -1) {
+      req.session.favorites.splice(itemIndex, 1);
+      console.log("req.session.favorite", req.session.favorites);
+    }
+  }
+  return res.status(200).send("Item removed from favorites");
+
+});
+
 
 module.exports = router;
