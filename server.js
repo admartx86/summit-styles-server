@@ -1,5 +1,7 @@
 require('dotenv').config();
 
+const path = require('path');
+
 const fs = require('fs');
 const https = require('https');
 
@@ -74,10 +76,16 @@ app.use(passport.session());
 const routes = require('./routes');
 app.use(routes);
 
+
 app.use((req, res, next) => {
     console.log("Session: ", req.session);
     next();
   });
+
+
+
+
+
 
 if (process.env.NODE_ENV === 'development') {
     const http = require('http');

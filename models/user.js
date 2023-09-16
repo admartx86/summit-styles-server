@@ -21,6 +21,24 @@ const userSchema = new mongoose.Schema({
       id: Number
       // Adding the ref lets you populate product details later
     }
+  ],
+favorites: [
+    {
+      _id: { 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'Product'  // assuming 'Product' is your product model name
+      },
+      quantity: Number,
+      price: Number,
+      name: String,
+      image: String,
+      size: String,
+      color: String,
+      description: String,
+      category: String,
+      id: Number
+      // Adding the ref lets you populate product details later
+    }
   ]
 });
 
