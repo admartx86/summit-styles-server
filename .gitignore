@@ -1,3 +1,4 @@
 .env
+credentials
 node_modules
 products.json
