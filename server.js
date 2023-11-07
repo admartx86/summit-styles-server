@@ -14,10 +14,11 @@ const ca = fs.readFileSync(caPath, 'utf8');
 
 const credentials = { key: privateKey, cert: certificate, ca: ca };
 
+const passport = require('passport');
+require('./config/passport');
+
 const express = require('express');
 const app = express();
-
-// app.set('trust proxy', '139.162.71.199')
 
 const connectToDb = require('./config/connectToDb');
 const mongooseConnection = connectToDb();
@@ -68,24 +69,16 @@ app.use(session({
     }
 }));
 
-const passport = require('passport');
-require('./config/passport');
 app.use(passport.initialize());
 app.use(passport.session());
   
 const routes = require('./routes');
 app.use(routes);
 
-
 app.use((req, res, next) => {
     console.log("Session: ", req.session);
     next();
-  });
-
-
-
-
-
+});
 
 if (process.env.NODE_ENV === 'development') {
     const http = require('http');

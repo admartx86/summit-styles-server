@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
     {
       _id: { 
         type: mongoose.Schema.Types.ObjectId, 
-        ref: 'Product'  // assuming 'Product' is your product model name
+        ref: 'Product'
       },
       quantity: Number,
       price: Number,
@@ -19,14 +19,13 @@ const userSchema = new mongoose.Schema({
       description: String,
       category: String,
       id: Number
-      // Adding the ref lets you populate product details later
     }
   ],
 favorites: [
     {
       _id: { 
         type: mongoose.Schema.Types.ObjectId, 
-        ref: 'Product'  // assuming 'Product' is your product model name
+        ref: 'Product'
       },
       quantity: Number,
       price: Number,
@@ -37,7 +36,6 @@ favorites: [
       description: String,
       category: String,
       id: Number
-      // Adding the ref lets you populate product details later
     }
   ]
 });

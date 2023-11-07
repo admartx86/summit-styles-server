@@ -7,31 +7,23 @@ const Product = require('../models/product');
 router.post('/logout', (req, res) => {
   try {
     console.log("Session before logout:", req.session);
-
     req.logout(() => {
       console.log("Logged out.");
-      
-      // Now destroy the session
       req.session.destroy((err) => {
         if (err) {
           console.error("Session destruction failed:", err);
           return res.status(500).json({ message: 'Logout failed' });
         }
-        
         console.log("Session after destroy:", req.session);
-        
-        // Send success response
         res.status(200).json({ message: 'Logout successful' });
       });
     });
-
   }
   catch (err) {
     console.error("Logout failed:", err);
     res.status(500).json({ message: 'Logout failed' });
   }
 });
-
 
 router.post('/login', (req, res, next) => {
   passport.authenticate('local', { keepSessionInfo: true }, async (err, user, info) => {
@@ -89,7 +81,7 @@ router.post('/register', (req, res, next) => {
   );
   newUser.save()
   .then((user) => {
-    res.json({ message: 'Registration successful', user });  // Sending response back
+    res.json({ message: 'Registration successful', user });
   })
   .catch((error) => {
     res.status(500).json({ message: 'An error occurred' });
@@ -225,22 +217,6 @@ router.get("/get-cart", async (req, res) => {
   }
 });
 
-// router.get("/get-favorites", async (req, res) => { 
-//   if (req.isAuthenticated()) {
-//     try {
-//       const user = await User.findById(req.user._id).populate('favorites._id');
-//       return res.status(200).json({ favorites: user.favorites });
-//     }
-//     catch (err) {
-//       return res.status(500).send("Failed to get favorites");
-//     }
-//   }
-//   else {
-//     const sessionFavorites = req.session.favorites || [];
-//     return res.status(200).json({ favorites: sessionFavorites });
-//   }
-// });
-
 router.get("/get-favorites", async (req, res) => { 
   if (req.isAuthenticated()) {
     try {
@@ -261,9 +237,7 @@ router.get("/get-favorites", async (req, res) => {
 });
 
 router.delete("/remove-from-favorites/:productId", async (req, res) => {
-
   const { productId } = req.params;
-  console.log("Received productId:", productId); // Debugging
   if (req.isAuthenticated()) {
     try {
       const user = await User.findById(req.user._id);
@@ -290,9 +264,7 @@ router.delete("/remove-from-favorites/:productId", async (req, res) => {
 });
 
 router.delete("/remove-from-cart/:productId/:size", async (req, res) => {
-  
     const { productId, size } = req.params;
-    console.log("Received productId:", productId); // Debugging
     if (req.isAuthenticated()) {
       try {
         const user = await User.findById(req.user._id);
