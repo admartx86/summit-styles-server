@@ -27,7 +27,7 @@ const cors = require('cors');
 
 const corsOptions = {
     origin: function (origin, callback) {
-        const whitelist = [/^https:\/\/summitstyles\.dev$/, /^http:\/\/localhost:(\d+)$/, /^http:\/\/172.233.221.154:8080$/];
+        const whitelist = [/^https:\/\/summitstyles\.dev$/, /^https:\/\/www\.summitstyles\.dev$/, /^http:\/\/localhost:(\d+)$/, /^http:\/\/172.233.221.154:8080$/];
         if (origin) {
             if (whitelist.some(allowedOrigin => allowedOrigin.test(origin) || allowedOrigin === origin)) {
                 callback(null, true)
